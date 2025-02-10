@@ -31,6 +31,10 @@ int main(){
     {
         printf("roll: %lf pitch: %lf yaw: %lf\n", buffer[0], buffer[1], buffer[2]);
         
+        if(buffer[0]>-20 && buffer[0]<20 && buffer[1]>-20 && buffer[1]<20)
+        {
+            printf("Roll and pitch insdie the range -20 to 20\n");
+        }
         // Delay each print out message by 1 second
         if (nanosleep(&req, NULL) < 0) {
             perror("nanosleep failed");
