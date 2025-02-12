@@ -18,32 +18,43 @@ int checkError(int val, const char *msg) {
     return val;
 }
 
+
 int main(){
     
+    // Input file
     const char *input_file = "angl.dat";
 
+    // Nanosleep variables
+    struct timespec ts;
+    ts.tv_sec=1;
+    ts.tv_nsec=0;
+
+    // Open input file and 
     int fd = checkError(open(input_file,O_RDONLY),"Open angl.dat");
 
-    double buffer[PACKET_SIZE];
-    struct timespec req = {1, 0};
-    
+    double buffer[PACKET_SIZE*DOUBLE_SIZE];
+
     while (read(fd, buffer, DOUBLE_SIZE * PACKET_SIZE) == DOUBLE_SIZE * PACKET_SIZE)
     {
-        printf("roll: %lf pitch: %lf yaw: %lf\n", buffer[0], buffer[1], buffer[2]);
-        
-        if(buffer[0]>-20 && buffer[0]<20 && buffer[1]>-20 && buffer[1]<20)
+        // If range conditions are met for roll and pitch, print values   
+        double roll = buffer[0];
+        double pitch = buffer[1];
+        double yaw = buffer[2];
+
+
+        if(roll > -20 && roll < 20 && pitch > -20 && pitch < 20)
         {
-            printf("Roll and pitch insdie the range -20 to 20\n");
+            printf("Values for roll and pitch inside the range -20 to 20\n");
+            printf("Roll: %.2lf, Pitch: %.2lf \n", roll, pitch);
+            fflush(stdout);
         }
+
         // Delay each print out message by 1 second
-        if (nanosleep(&req, NULL) < 0) {
-            perror("nanosleep failed");
-            break;
-        }
+        nanosleep(&ts,NULL);
     }
 
     // Close input file
     close(fd);
 
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
